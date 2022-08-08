@@ -1,6 +1,6 @@
 # Lista-tarefas 
 
---- Como instalar ---
+# Instalação
 git clone https://github.com/LuizJunior007/Lista-tarefas.git.
 Entre na pasta 'public_html'.
 No terminal inicie o servidor php 'php -S localhost:8000'.
