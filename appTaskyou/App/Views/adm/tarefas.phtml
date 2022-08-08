@@ -1,0 +1,404 @@
+<header>
+    <nav class="navbar navbar-expand-md bg-color">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <a id="avatar_perfil" href="#mudarFoto" data-bs-toggle="modal" role="button">
+                    <i class="fas fa-camera"></i>
+                    <img src="<?= $this->view->perfil['foto'] ?>" alt="avatar">
+                </a>
+
+                <a href="#mudarNome" data-bs-toggle="modal">
+                    <span class="text-light ps-3 nome"><?= $this->view->perfil['nome'] ?></span>
+                </a>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars text-light"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item me-0 me-md-3"><a class="nav-link" href="/dashboard">Home</a></li>
+                    <li class="nav-item me-0 me-md-3"><a class="nav-link marcar" href="/tarefas">Tarefas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/sair">Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<section>
+    <div class="container">
+        <div class="row mt-3 g-0">
+            <div class="col-12">
+                <h4 class="pt-3 pb-3 border-bottom">Tarefas pendentes</h4>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 col-sm-12 col-md-2 col-lg-4">
+                <button type="button" class="btn btn-color" data-bs-toggle="modal" data-bs-target="#addTarefa">
+                    <i class="fas fa-plus text-light"></i>
+                </button>
+            </div>
+
+            <div class="col-12 col-sm-12 col-md-5 col-lg-4 mt-3 mt-md-0">
+                <select name="filtrar" id="filtrar" class="form-select">
+                    <option selected>Classificar por</option>
+                    <option value="asc">Data mais próxima</option>
+                    <option value="Alta">Prioridade Alta</option>
+                    <option value="Média">Prioridade Média</option>
+                    <option value="Baixa">Prioridade Baixa</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-sm-12 col-md-5 col-lg-4 mt-3 mt-md-0">
+                <input type="search" name="pesquisar" id="pesquisar" class="form-control" placeholder="Pesquise aqui">
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="bg-white p-3 rounded border table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Título</th>
+                                <th scope="col">Descrição</th>
+                                <th scope="col">Prioridade</th>
+                                <th scope="col">Data</th>
+                                <th scope="col">Hora</th>
+                                <th scope="col">Ações</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tabela">
+                            <?php if(!$this->view->tarefas == '') { ?>
+                                <?php foreach($this->view->tarefas as $i => $t) { ?>
+                                    <tr>
+                                        <td><?= $t['titulo'] ?></td>
+                                        <td><?= $t['descricao'] ?></td>
+                                        <td><?= $t['prioridade'] ?></td>
+                                        <td><?= date('d/m/Y', strtotime($t['data'])) ?></td>
+                                        <td><?= $t['hora'] ?></td>
+                                        <td>
+                                            <i class="fas fa-check text-success me-2" title="Concluir" onclick="concluir_t(<?= $t['id'] ?>)"></i>
+                                            <i class="fas fa-edit text-info me-2" title="Editar" onclick="editar_t(<?= $t['id'] ?>)"></i>
+                                            <i class="fas fa-trash text-danger" title="Remover" onclick="remover_t(<?= $t['id'] ?>)"></i>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            <?php } 
+                            
+                            else { ?>
+                                <tr>
+                                    <td colspan="6">Você ainda não tem nenhuma tarefa.</td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal fade" id="addTarefa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Nova Tarefa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="/nova_tarefa" method="POST">
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="titulo">Título</label>
+                        <input type="text" name="titulo" id="titulo" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="descricao">Descrição</label>
+                        <input type="text" name="descricao" id="descricao" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="prioridade">Prioridade</label>
+                        <select name="prioridade" id="prioridade" class="form-select" required>
+                            <option value="Alta">Alta</option>
+                            <option value="Média">Média</option>
+                            <option value="Baixa">Baixa</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label for="data">Data</label>
+                        <input type="date" name="data" id="data" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="hora">Hora</label>
+                        <input type="time" name="hora" id="hora" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-color-dark" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-color">Adicionar</button>
+                </form>
+            </div>
+    </div>
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="editTarefa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Tarefa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="/editar_tarefa" method="POST">
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="eTitulo">Título</label>
+                        <input type="text" name="titulo" id="eTitulo" class="form-control">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="eDescricao">Descrição</label>
+                        <input type="text" name="descricao" id="eDescricao" class="form-control">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="ePrioridade">Prioridade</label>
+                        <select name="prioridade" id="ePrioridade" class="form-select">
+                            <option value="Alta">Alta</option>
+                            <option value="Média">Média</option>
+                            <option value="Baixa">Baixa</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label for="eData">Data</label>
+                        <input type="date" name="data" id="eData" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="eHora">Hora</label>
+                        <input type="time" name="hora" id="eHora" class="form-control">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-color-dark" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-color">Editar</button>
+                </form>
+            </div>
+    </div>
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="removerTarefa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Remover Tarefa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="/remover_tarefa" method="POST">
+                <span>Tem certeza que deseja remover essa tarefa?</span>
+                <input type="text" name="id" id="idT" style="display: none;">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-color-dark" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-color">Remover</button>
+                </form>
+            </div>
+    </div>
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="concluirTarefa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Concluir Tarefa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="/concluir_tarefa" method="POST">
+                <span>Tem certeza que deseja concluir essa tarefa?</span>
+                <input type="text" name="id" id="idC" style="display: none;">
+                <input type="text" name="titulo" id="tTitulo" style="display: none;">
+                <input type="text" name="descricao" id="tDescricao" style="display: none;">
+                <input type="text" name="prioridade" id="tPrioridade" style="display: none;">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-color-dark" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-color">Concluir</button>
+                </form>
+            </div>
+    </div>
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="mudarFoto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Alterar foto do perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="/alterar_foto" method="POST" enctype="multipart/form-data">
+                <input type="file" name="foto" id="foto" class="form-control">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-color-dark" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-color">Alterar</button>
+                </form>
+            </div>
+    </div>
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="mudarNome" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Alterar nome</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="/alterar_nome" method="POST">
+                <input type="text" name="nome" id="nome" placeholder="Nome de usuário" class="form-control" required minlength="4">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-color-dark" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-color">Alterar</button>
+                </form>
+            </div>
+    </div>
+</div>
+</div>
+
+<?php if(isset($_GET['add']) && $_GET['add'] == 'success') { ?>
+    <div class="toast bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Tarefa cadastrada com sucesso!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php } 
+
+else if(isset($_GET['add']) && $_GET['add'] == 'error') { ?>
+    <div class="toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Erro ao cadastrar tarefa!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php } 
+
+else if(isset($_GET['edit']) && $_GET['edit'] == 'success') { ?>
+    <div class="toast bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Tarefa editada com sucesso!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php } 
+
+else if(isset($_GET['edit']) && $_GET['edit'] == 'error') { ?>
+    <div class="toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Error ao editar tarefa!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php } 
+
+else if(isset($_GET['complete']) && $_GET['complete'] == 'success') { ?>
+    <div class="toast bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Tarefa concluída!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php } 
+
+else if(isset($_GET['complete']) && $_GET['complete'] == 'error') { ?>
+    <div class="toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Erro ao concluir tarefa!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php } 
+
+else if(isset($_GET['remove']) && $_GET['remove'] == 'success') { ?>
+    <div class="toast bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Tarefa removida com sucesso!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php } 
+
+else if(isset($_GET['remove']) && $_GET['remove'] == 'error') { ?>
+    <div class="toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Erro ao remover tarefa!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php } ?>
+

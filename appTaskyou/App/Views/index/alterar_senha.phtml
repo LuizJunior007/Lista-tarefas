@@ -1,0 +1,19 @@
+<div class="d-flex justify-content-center align-items-center h-100 flex-column">
+    <div class="border rounded" id="login_box">
+        <div>
+            <h4>Alterar senha</h4>
+        </div>
+
+        <div>
+            <form action="/nova_senha" method="POST">
+                <input type="password" name="nova_senha" id="nova_senha" placeholder="Nova senha" class="form-control bg-light">
+                <input type="password" name="confirm_senha" id="confirm_senha" placeholder="Confirmar senha" class="form-control bg-light">
+                
+                <button type="submit" class="btn btn-color" id="btnAltSenha">Alterar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="msgErro" class="bg-danger text-white p-2 mt-2 rounded" style="display: none;"></div>
+</div>
+

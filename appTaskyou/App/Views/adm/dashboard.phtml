@@ -1,0 +1,213 @@
+<header>
+    <nav class="navbar navbar-expand-md bg-color">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <a id="avatar_perfil" href="#mudarFoto" data-bs-toggle="modal" role="button">
+                    <i class="fas fa-camera"></i>
+                    <img src="<?= $this->view->perfil['foto'] ?>" alt="avatar">
+                </a>
+
+                <a href="#mudarNome" data-bs-toggle="modal">
+                    <span class="text-light ps-3 nome"><?= $this->view->perfil['nome'] ?></span>
+                </a>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars text-light"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item me-0 me-md-3"><a class="nav-link marcar" href="/dashboard">Home</a></li>
+                    <li class="nav-item me-0 me-md-3"><a class="nav-link" href="/tarefas">Tarefas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/sair">Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<section>
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-md-4 mt-3 mt-md-0">
+                <div class="card p-3">
+                    <div class="card-container">
+                        <div>
+                            <h4><?= $this->view->hoje ?></h4>
+                            <span>Tarefas concluídas (Hoje)</span>  
+                        </div>
+
+                        <div>
+                            <i class="fas fa-clipboard-check azul-claro"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mt-3 mt-md-0">
+                <div class="card p-3">
+                    <div class="card-container">
+                        <div>
+                            <h4><?= $this->view->total_c ?></h4>
+                            <span>Tarefas concluídas (Total)</span>
+                        </div>
+
+                        <div>
+                            <i class="fas fa-tasks azul-claro"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mt-3 mt-md-0">
+                <div class="card p-3">
+                    <div class="card-container">
+                        <div>
+                            <h4><?= $this->view->total_p ?></h4>
+                            <span>Tarefas pendentes</span>
+                        </div>
+
+                        <div>
+                            <i class="fas fa-check-double azul-claro"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-6">
+                    <div class="titulo">
+                        <h5>Tarefas concluídas</h5>
+                    </div>
+                
+                <ul class="list-group">
+                    <?php if(empty($this->view->tarefas_c)) { ?>
+                        <li class="list-group-item">Nenhum registro foi encontrado.</li>
+                    <?php } 
+                    
+                    else { ?>
+
+                        <?php foreach($this->view->tarefas_c as $t) { ?>
+                            <li class="list-group-item">
+                                <h6><?= $t['titulo'] ?></h6>
+                                <small><?= $t['descricao'] ?></small>
+                            </li>
+                        <?php } ?>
+                    <?php } ?>
+                </ul>   
+            </div>
+
+            <div class="col-md-6 mt-5 mt-md-0">
+                <div class="titulo">
+                    <h5>Meu progresso</h5>
+                </div>
+                
+                <div class="bg-white p-3 rounded border">
+                    <canvas id="grafico"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-md-6">
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal fade" id="mudarFoto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Alterar foto do perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="/alterar_foto" method="POST" enctype="multipart/form-data">
+                <input type="file" name="foto" id="foto" class="form-control" required>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-color-dark" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-color">Alterar</button>
+                </form>
+            </div>
+    </div>
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="mudarNome" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Alterar nome</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="/alterar_nome" method="POST">
+                <input type="text" name="nome" id="nome" placeholder="Nome de usuário" class="form-control" required minlength="4">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-color-dark" data-bs-dismiss="modal">Fechar</button>
+                <button type="submit" class="btn btn-color">Alterar</button>
+                </form>
+            </div>
+    </div>
+</div>
+</div>
+
+<?php if(isset($_GET['perfil']) && $_GET['perfil'] == 'true') { ?>
+    <div class="toast bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Foto de perfil foi alterada!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php }  
+
+else if(isset($_GET['editNome']) && $_GET['editNome'] == 'true') { ?>
+    <div class="toast bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Seu nome foi alterado!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php } 
+
+else if(isset($_GET['perfil']) && $_GET['perfil'] == 'error') { ?>
+    <div class="toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Erro ao alterar foto de perfil!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php } 
+
+else if(isset($_GET['editNome']) && $_GET['editNome'] == 'error') { ?>
+    <div class="toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Erro ao alterar nome!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+<?php } ?>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+<script src="/js/graficos.js"></script>
