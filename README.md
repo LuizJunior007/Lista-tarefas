@@ -1,5 +1,4 @@
-# Lista-tarefas
-App de controle de tarefas, feito em php ( MVC ) e mysql https://ljrportifolio.com/. 
+# Lista-tarefas 
 
 --- Como instalar ---
 git clone https://github.com/LuizJunior007/Lista-tarefas.git.
